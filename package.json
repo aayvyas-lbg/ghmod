@@ -1,0 +1,41 @@
+{
+	"name": "ghmod",
+	"description": "Github Operations",
+	"version": "0.0.1",
+	"license": "MIT",
+	"bin": {
+		"ghmod": "index.js"
+	},
+	"author": {
+		"name": "Aayush Vyas",
+		"email": "aayushbrajeshvyas@gmail.com",
+		"url": "https://github.com/aayvyas-lbg"
+	},
+	"keywords": [
+		"ghmod",
+		"Aayush Vyas"
+	],
+	"files": [
+		"index.js",
+		"utils"
+	],
+	"scripts": {
+		"format": "prettier --write \"./**/*.{js,json}\""
+	},
+	"dependencies": {
+		"@colors/colors": "^1.5.0",
+		"chalk": "^4.1.2",
+		"cli-alerts": "^1.2.2",
+		"cli-handle-error": "^4.4.0",
+		"cli-handle-unhandled": "^1.1.1",
+		"cli-meow-help": "^3.1.0",
+		"cli-spinners": "^2.9.0",
+		"cli-table3": "^0.6.3",
+		"cli-welcome": "^2.2.2",
+		"dotenv": "^16.0.3",
+		"meow": "^9.0.0"
+	},
+	"devDependencies": {
+		"prettier": "^2.8.8"
+	}
+}
