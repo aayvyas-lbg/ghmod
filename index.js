@@ -18,11 +18,15 @@ const { ratelimit, checkRateLimit } = require('./modules/ratelimit/ratelimit');
 
 const input = cli.input;
 const flags = cli.flags;
-const { clear, debug } = flags;
+const { noClear, debug } = flags;
 
 (async () => {
-	init({ clear });
+	init({ noClear });
 	input.includes(`help`) && cli.showHelp(0);
+	if (input.length == 0) {
+		return;
+	}
+
 	if (!validateOutputFlag(flags.output)) {
 		logger(
 			'INVALID OUTPUT FLAG',
@@ -30,15 +34,17 @@ const { clear, debug } = flags;
 			'error'
 		);
 		return;
-	}
-	validateCodeSearch(input) &&
+	} else if (validateCodeSearch(input)) {
 		codeSearch.runSearch(
 			flags.output,
 			input[input.length - 1],
 			flags.organization
 		);
-
-	input.includes('ratelimit') && checkRateLimit();
+	} else if (input.includes('ratelimit')) {
+		checkRateLimit();
+	} else {
+		logger('INVALID COMMAND', 'Please enter a valid command', 'error');
+	}
 
 	debug && log(flags);
 })();

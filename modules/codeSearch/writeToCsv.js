@@ -1,10 +1,10 @@
 const fs = require('fs');
 const { logger } = require('../../utils/logger');
 
-const writeToCsv = async (object, fileName) => {
-	fileName = fileName.replace(':', '_');
+const writeToCsv = async (object, query) => {
+	let fileName = query.replace(':', '_');
 	let writer = fs.createWriteStream(`${fileName}.csv`);
-	writer.write('repo_name, repo_url, file_names, file_paths, file_url\n');
+	writer.write('repo_name,repo_url,file_names,file_paths,file_url\n');
 	await object.forEach(async (value, key) => {
 		let fileNames = '';
 		await value.file_names.forEach(async file_name => {
@@ -20,7 +20,7 @@ const writeToCsv = async (object, fileName) => {
 		});
 
 		writer.write(
-			`${value.repo_name}, ${value.repo_url}, ${fileNames}, ${filePaths} , ${fileUrls}\n`
+			`${value.repo_name},${value.repo_url},${fileNames},${filePaths},${fileUrls},${query}\n`
 		);
 	});
 	await logger(
