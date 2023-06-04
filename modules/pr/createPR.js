@@ -82,7 +82,6 @@ const createPR = async () => {
 	await call().then(response => {
 		if (response.status === 422) {
 			response.json().then(async data => {
-				console.log(data);
 				if (data.errors[0].message === undefined) {
 					logger(
 						'Pull Request',
