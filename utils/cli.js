@@ -41,7 +41,8 @@ const flags = {
 const commands = {
 	help: { desc: `Print help info` },
 	code: { desc: 'Github Code Search with file level tracing' },
-	ratelimit: { desc: 'Check rate limit for current auth session' }
+	ratelimit: { desc: 'Check rate limit for current auth session' },
+	pr: { desc: 'Creates a PR by using information from your local git' }
 };
 
 const helpText = meowHelp({
