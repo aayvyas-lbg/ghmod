@@ -3,11 +3,12 @@ const exec = promisify(require('child_process').exec);
 const { logger } = require('../../utils/logger');
 const { stderr, exit } = require('process');
 const { error } = require('console');
+const colors = require('@colors/colors');
+const { assignIssue } = require('./assignIssue');
 
 const execGit = async command => {
 	let op = await exec(command).catch(err => {
-		console.log(err.stderr);
-		logger('PR', 'Error: Not a git repository', 'error');
+		logger('Pull Request', 'Error: Not a git repository', 'error');
 		exit(0);
 	});
 	return op.stdout.trim();
@@ -19,16 +20,25 @@ const getBranch = async () => {
 	return await execGit('git branch --show');
 };
 const getBody = async (title, branch) => {
-	return ` ## ${title}
-    **Jira ticket ID** : \`${branch}\`
-    `;
+	return (
+		`# ${title.split(':').length > 1 ? title.split(':')[1] : title} \n` +
+		`<p> <strong>Jira ticket ID</strong>: <code>${branch}</code> </p>`
+	);
 };
-
 const gitInfo = async () => {
+	const username = await execGit('git config user.name');
+	if (username === undefined || username === '') {
+		logger(
+			'Pull Request',
+			'username is not set, use: git config user.name',
+			'warning'
+		);
+	}
 	const op = await execGit('git config --get remote.origin.url');
 	return {
 		repoName: op.split('/')[1].replace('.git', ''),
-		owner: op.split(':')[1].split('/')[0]
+		owner: op.split(':')[1].split('/')[0],
+		username: username
 	};
 };
 const prepareData = async () => {
@@ -38,15 +48,12 @@ const prepareData = async () => {
 		title: title,
 		body: await getBody(title, branch),
 		head: branch,
-		base: branch
+		base: 'master'
 	});
 
 	return raw;
 };
-
 const call = async () => {
-	const info = await gitInfo();
-
 	var myHeaders = new Headers();
 	myHeaders.append('Accept', 'application/vnd.github+json');
 	myHeaders.append('Authorization', `Bearer ${process.env.GITHUB_PAT}`);
@@ -62,19 +69,51 @@ const call = async () => {
 		redirect: 'follow'
 	};
 
-	console.log(raw);
-
-	await fetch(
+	return await fetch(
 		`https://api.github.com/repos/${info.owner}/${info.repoName}/pulls`,
 		requestOptions
-	)
-		.then(response => response.text())
-		.then(result => console.log(result))
-		.catch(error => console.log('error', error));
+	);
 };
 
+let info = null;
 const createPR = async () => {
-	await call();
+	info = await gitInfo();
+	await call().then(response => {
+		if (response.status === 422) {
+			logger('Pull Request', 'Pull Request Already Exists', 'error');
+			return;
+		}
+		if (response.status === 201) {
+			response.json().then(data => {
+				const pr = data.html_url;
+				logger(
+					'Pull Request',
+					`Successfully created pull request: ${colors.blue(pr)}`,
+					'success'
+				);
+				assignIssue(
+					parseInt(pr.split('/')[pr.split('/').length - 1]),
+					info
+				).then(
+					response.status
+						? logger(
+								'Pull Request',
+								`Assign the Pull Requests to @${info.username}`,
+								'info'
+						  )
+						: logger(
+								'Pull Request',
+								`Failed to Assign to ${info.username}`,
+								'error'
+						  )
+				);
+			});
+		}
+		if (response.status === 403) {
+			logger('Pull Request', 'Bad Credentials', 'error');
+			return;
+		}
+	});
 };
 
 module.exports = { createPR };
