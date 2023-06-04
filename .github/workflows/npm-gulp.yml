@@ -11,6 +11,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
+            - name: Setup
+              run: |
+                  npm install
             - name: Unit Test
               run: |
                   npm run test
