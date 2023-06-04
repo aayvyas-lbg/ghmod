@@ -82,7 +82,8 @@ const createPR = async () => {
 	await call().then(response => {
 		if (response.status === 422) {
 			response.json().then(async data => {
-				if (data.message.includes('Validation Failed')) {
+				console.log(data);
+				if (data.errors[0].message === undefined) {
 					logger(
 						'Pull Request',
 						`Branch: ${info.branch} Doesnot exists on remote, please run: git push origin ${info.branch}`,
