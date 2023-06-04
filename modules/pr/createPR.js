@@ -19,9 +19,26 @@ const getTitle = async () => {
 const getBranch = async () => {
 	return await execGit('git branch --show');
 };
+
+const titleCase = str => {
+	return str
+		.toLowerCase()
+		.split(' ')
+		.map(function (word) {
+			return word.charAt(0).toUpperCase() + word.slice(1);
+		})
+		.join(' ');
+};
+
 const getBody = async (title, branch) => {
 	return (
-		`# ${title.split(':').length > 1 ? title.split(':')[1] : title} \n` +
+		`# ${
+			title.split(':').length > 1
+				? title.split(':')[1].split(branch)[1] !== undefined
+					? await titleCase(title.split(':')[1].split(branch)[1])
+					: await titleCase(title.split(':')[1])
+				: title
+		} \n` +
 		`<p> <strong>Jira ticket ID</strong>: <code>${branch}</code> </p>`
 	);
 };
