@@ -15,6 +15,7 @@ const { logger } = require('./utils/logger');
 const { validateOutputFlag } = require('./validation/flagValidation');
 const { validateCodeSearch } = require('./validation/commandValidation');
 const { ratelimit, checkRateLimit } = require('./modules/ratelimit/ratelimit');
+const { createPR } = require('./modules/PR/createPR');
 
 const input = cli.input;
 const flags = cli.flags;
@@ -42,6 +43,8 @@ const { noClear, debug } = flags;
 		);
 	} else if (input.includes('ratelimit')) {
 		checkRateLimit();
+	} else if (input.includes('pr')) {
+		createPR();
 	} else {
 		logger('INVALID COMMAND', 'Please enter a valid command', 'error');
 	}
