@@ -27,6 +27,7 @@ const getBody = async (title, branch) => {
 };
 const gitInfo = async () => {
 	const username = await execGit('git config user.name');
+	const branch = await getBranch();
 	if (username === undefined || username === '') {
 		logger(
 			'Pull Request',
@@ -38,16 +39,16 @@ const gitInfo = async () => {
 	return {
 		repoName: op.split('/')[1].replace('.git', ''),
 		owner: op.split(':')[1].split('/')[0],
-		username: username
+		username: username,
+		branch: branch
 	};
 };
 const prepareData = async () => {
 	let title = await getTitle();
-	let branch = await getBranch();
 	var raw = JSON.stringify({
 		title: title,
-		body: await getBody(title, branch),
-		head: branch,
+		body: await getBody(title, info.branch),
+		head: info.branch,
 		base: 'master'
 	});
 
@@ -80,7 +81,22 @@ const createPR = async () => {
 	info = await gitInfo();
 	await call().then(response => {
 		if (response.status === 422) {
-			logger('Pull Request', 'Pull Request Already Exists', 'error');
+			response.json().then(async data => {
+				if (data.message.includes('Validation Failed')) {
+					logger(
+						'Pull Request',
+						`Branch: ${info.branch} Doesnot exists on remote, please run: git push origin ${info.branch}`,
+						'error'
+					);
+				} else {
+					logger(
+						'Pull Request',
+						'Pull Request Already Exists',
+						'error'
+					);
+				}
+			});
+
 			return;
 		}
 		if (response.status === 201) {
