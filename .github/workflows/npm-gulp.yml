@@ -1,32 +1,37 @@
 name: NodeJS with Gulp
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    push:
+        branches: ['master']
+    pull_request:
+        branches: ['master']
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Unit Test
+              run: |
+                  npm run test
+            - name: Coverage
+              run: |
+                  npm run coverage
+    build:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/master'
+        strategy:
+            matrix:
+                node-version: [18]
 
-    strategy:
-      matrix:
-        node-version: [18]
+        steps:
+            - uses: actions/checkout@v3
 
-    steps:
-    - uses: actions/checkout@v3
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Build
-      run: |
-        npm install
-        
-    - name: Tag
-      run: |
-        git tag v0.0.1
-        git push origin v0.0.1
+            - name: Build
+              run: |
+                  npm install
