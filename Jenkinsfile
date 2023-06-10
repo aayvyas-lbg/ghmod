@@ -20,7 +20,6 @@ pipeline {
             steps {
                 script{
                     bat 'npm run test'
-                    pullRequest.addLabel('Build Failed')
                 }
                 
             }
