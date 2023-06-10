@@ -1,9 +1,3 @@
-properties([
-    pipelineTriggers([
-
-    ])
-])
-
 pipeline {
     agent any
     triggers {
