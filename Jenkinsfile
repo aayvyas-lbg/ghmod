@@ -1,9 +1,15 @@
+properties([
+    pipelineTriggers([
+        pullRequestReview(reviewStates: ['approved']),
+        issueCommentTrigger('.*test.*')
+    ])
+])        
+        
+        
+  
 pipeline {
     agent any
-    triggers {
-        pullRequestReview(reviewStates: ['approved'])
-        issueCommentTrigger('.*test.*')
-    }
+
     stages {
         stage('npm install') {
             steps {
