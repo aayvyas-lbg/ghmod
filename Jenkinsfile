@@ -1,12 +1,15 @@
 properties([
     pipelineTriggers([
-      pullRequestReview(reviewStates: ['approved'])
+
     ])
 ])
 
 pipeline {
     agent any
-    
+    triggers {
+        pullRequestReview(reviewStates: ['approved']),
+        issueCommentTrigger('.*test.*')
+    }
     stages {
         stage('npm install') {
             steps {
@@ -15,7 +18,11 @@ pipeline {
         }
         stage('npm run test') {
             steps {
-                bat 'npm install'
+                script{
+                    bat 'npm run test'
+                    pullRequest.addLabel('Build Failed')
+                }
+                
             }
         }
     }
