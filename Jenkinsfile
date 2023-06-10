@@ -7,7 +7,7 @@ properties([
 pipeline {
     agent any
     triggers {
-        pullRequestReview(reviewStates: ['approved']),
+        pullRequestReview(reviewStates: ['approved'])
         issueCommentTrigger('.*test.*')
     }
     stages {
