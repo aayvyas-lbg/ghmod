@@ -1,7 +1,7 @@
 properties([
     pipelineTriggers([
         pullRequestReview(reviewStates: ['approved']),
-        issueCommentTrigger('.*test.*')
+        issueCommentTrigger('.*/run.*')
     ])
 ])        
         
