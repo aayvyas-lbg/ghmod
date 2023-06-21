@@ -6,7 +6,6 @@
  *
  * @author Aayush Vyas <https://github.com/aayvyas-lbg>
  */
-
 const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
