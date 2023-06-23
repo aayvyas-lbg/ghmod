@@ -39,6 +39,7 @@ const { noClear, debug } = flags;
 		codeSearch.runSearch(
 			flags.output,
 			input[input.length - 1],
+			
 			flags.organization
 		);
 	} else if (input.includes('ratelimit')) {
