@@ -48,5 +48,7 @@ const { noClear, debug } = flags;
 		logger('INVALID COMMAND', 'Please enter a valid command', 'error');
 	}
 
+	
+
 	debug && log(flags);
 })();
