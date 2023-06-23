@@ -12,6 +12,7 @@ const flags = {
 		type: `boolean`,
 		default: false,
 		desc: `Don't clear the console`j
+		
 	},
 	debug: {
 		type: `boolean`,
