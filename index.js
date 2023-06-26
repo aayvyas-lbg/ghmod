@@ -22,6 +22,7 @@ const { createPR } = require('./modules/PR/createPR');
 const input = cli.input;
 
 const flags = cli.flags;
+
 const { noClear, debug } = flags;
 
 (async () => {
