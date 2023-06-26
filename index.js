@@ -10,8 +10,9 @@
 const init = require('./utils/init');
 const cli = require('./utils/cli');
 const log = require('./utils/log');
-const codeSearch = require('./modules/codeSearch/codeSearch');
+const codeSearch = require('./modules/codeSearch/codeSearch');;
 const { logger } = require('./utils/logger');
+
 const { validateOutputFlag } = require('./validation/flagValidation');
 const { validateCodeSearch } = require('./validation/commandValidation');
 const { ratelimit, checkRateLimit } = require('./modules/ratelimit/ratelimit');
